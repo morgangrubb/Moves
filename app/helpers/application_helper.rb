@@ -113,6 +113,11 @@ module ApplicationHelper
     add_class! options[:box], :block
     add_class! options[:box], :withsidebar if vertical_tabs?
 
+    if options[:small]
+      add_class! options[:box], :small
+      add_class! options[:box], options[:small]
+    end
+
     # Put it all together
     concat content_tag(:div, header + content + footer, options[:box])
     

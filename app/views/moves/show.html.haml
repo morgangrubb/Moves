@@ -1,0 +1,14 @@
+- content_for :head do
+  %script{ :type => "text/javascript", :src => "/js/jquery.media.js" }
+  :javascript
+    jQuery(document).ready(function() {
+      $('.media').media({ width: 400, height: 300, autoplay: true });
+    });
+
+- widget_box(@move.name, :small => :left) do
+  Rar!
+
+- widget_box("Video", :small => :right) do
+  - if @move.local_movie?
+    .hvlog
+      = link_to "", '/movies/' + @move.local_file_name, :class => :media
