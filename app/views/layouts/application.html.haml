@@ -1,0 +1,52 @@
+!!!
+%html
+  %head
+    %title Moves
+    = csrf_meta_tag
+    :css
+      @import url("/css/style.css");
+      @import url("/css/jquery.wysiwyg.css");
+      @import url("/css/facebox.css");
+      @import url("/css/visualize.css");
+      @import url("/css/date_input.css");
+
+    /[if IE]
+      %meta{ 'http-equiv' => 'X-UA-Compatible', 'content' => "IE=7" }
+      %script{ :type => "text/javascript", :src => "js/excanvas.js" }
+      
+    /[if lt IE 8]
+      :css
+        @import url("css/ie.css")
+
+    %script{ :type => "text/javascript", :src => "js/jquery.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.img.preload.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.filestyle.mini.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.wysiwyg.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.date_input.pack.js" }
+
+    %script{ :type => "text/javascript", :src => "js/facebox.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.visualize.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.select_skin.js" }
+    %script{ :type => "text/javascript", :src => "js/ajaxupload.js" }
+    %script{ :type => "text/javascript", :src => "js/jquery.pngfix.js" }
+    %script{ :type => "text/javascript", :src => "js/custom.js" }
+
+  %body
+    #hld
+      .wrapper
+        
+        #header
+          .hdrl
+          .hdrr
+          %h1
+            = link_to "Ceroc Moves Database", '/'
+          
+          %ul#nav
+            %li
+              = link_to 'Moves', moves_path
+            %li
+              = link_to 'Routines', '/routines'
+          
+          %p.user You are not logged in. Naughty you.
+
+        = yield

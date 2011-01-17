@@ -8,8 +8,14 @@ class Move < ActiveRecord::Base
 
   before_save :fetch_movie
 
+  named_scope :ordered, :order => "name ASC"
+
   def self.find_or_new_by_url(url)
     where(:url => url).first || new(:url => url)
+  end
+  
+  def to_param
+    "#{id}-#{name.gsub(/[^a-z0-9]+/i, '-')}"
   end
   
   def get_movie
