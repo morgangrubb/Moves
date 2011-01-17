@@ -1,0 +1,51 @@
+require 'crawl'
+
+class Move < ActiveRecord::Base
+  validates_presence_of :name
+  validates_presence_of :url
+
+  LOCAL_MOVIE_PATH = Rails.root.join('public', 'movies')
+
+  before_save :fetch_movie
+
+  def self.find_or_new_by_url(url)
+    where(:url => url).first || new(:url => url)
+  end
+  
+  def get_movie
+    if fetch_movie
+      save
+    end
+  end
+  
+  def fetch_movie
+    return nil if new_record? || local_movie? || movie_url.blank?
+
+    %x(wget #{movie_url} -O #{local_file})
+    begin
+      if local_file.size > 0
+        self.local_movie = true
+      end
+    rescue Errno::ENOENT => e
+      nil
+    end
+  end
+  
+  def movie_url
+    value = super
+    if value[0] == '/'
+      'http://network.ceroc.com' + value
+    else
+      value
+    end
+  end
+  
+  def local_file
+    LOCAL_MOVIE_PATH.join(local_file_name)
+  end
+  
+  def local_file_name
+    movie_url =~ /\.([a-z0-9_-]+)$/i
+    "#{id}.#{$1.downcase}"
+  end
+end
