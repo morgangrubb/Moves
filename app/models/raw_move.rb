@@ -6,23 +6,29 @@ class RawMove < ActiveRecord::Base
   end
   
   def promote
-    move = Move.find_or_new_by_url url
-    move.update_attributes parse
-    move.save
+    puts "Promoting RawMove##{id}"
+    
+    begin
+      move = Move.find_or_new_by_url url
+      move.update_attributes parse
+      move.save
+    rescue Exception => e
+      puts e.message
+    end
   end
 
   def parse
     {
       :name               => get_name,
       :movie_url          => get_movie,
-      # :category           => get_category,
-      # :difficulty         => get_difficulty,
-      # :lead_start_hand    => get_lead_start_hand,
-      # :lead_finish_hand   => get_lead_finish_hand,
-      # :follow_start_hand  => get_follow_start_hand,
-      # :follow_finish_hand => get_follow_finish_hand,
-      # :spins              => get_spins,
-      # :beats              => get_beats,
+      :category           => get_category,
+      :difficulty         => get_difficulty,
+      :lead_start_hand    => get_lead_start_hand,
+      :lead_finish_hand   => get_lead_finish_hand,
+      :follow_start_hand  => get_follow_start_hand,
+      :follow_finish_hand => get_follow_finish_hand,
+      :spins              => get_spins,
+      :beats              => get_beats,
       # :description        => get_description
     }
   end
@@ -46,4 +52,77 @@ class RawMove < ActiveRecord::Base
   def body_node
     @doc ||= Nokogiri::HTML body
   end
+  
+  def get_category
+    cat = get_piece('category')
+    Category.find_or_create_by_name cat if cat.present?
+  end
+  
+  def get_difficulty
+    d = get_piece('difficulty')
+    Difficulty.find_or_create_by_name d if d.present?
+  end
+  
+  def get_lead_start_hand
+    Hand.find_or_create_by_name hands[:lead_start] if hands[:lead_start].present?
+  end
+  
+  def get_lead_finish_hand
+    Hand.find_or_create_by_name hands[:lead_finish] if hands[:lead_finish].present?
+  end
+  
+  def get_follow_start_hand
+    Hand.find_or_create_by_name hands[:follow_start] if hands[:follow_start].present?
+  end
+
+  def get_follow_finish_hand
+    Hand.find_or_create_by_name hands[:follow_finish] if hands[:follow_finish].present?
+  end
+  
+  def get_spins
+    if get_piece('spins').split(/\s+/).first =~ /yes/i
+      true
+    else
+      false
+    end
+  end
+  
+  def get_beats
+    beats = get_piece('beats').to_i
+    if beats > 0
+      beats
+    else
+      nil
+    end
+  end
+  
+  private
+    
+    def hands
+      return @hands if @hands.present?
+      
+      res = {}
+      
+      fragment = body_node.css('p').find { |f| f.to_html =~ /Hands:/ }
+
+      if fragment
+        fragment = fragment.to_html
+
+        fragment =~ %r(Starting[ -]*Man\s*:\s*</b>([^<]+)<b>\s*Lady\s*:\s*</b>([^<]+)<)
+        res[:lead_start]   = $1.strip
+        res[:follow_start] = $2.strip
+
+        fragment =~ %r(Finish[ -]*Man\s*:\s*</b>([^<]+)<b>\s*Lady\s*:\s*</b>([^<]+)<)
+        res[:lead_finish]   = $1.strip
+        res[:follow_finish] = $2.strip
+      end
+
+      @hands = res
+    end
+  
+    def get_piece(piece)
+      fragment = body_node.to_xml.split('<b>').find { |s| s =~ /#{piece}:/i }
+      fragment.split('</b>').last.strip
+    end
+
 end

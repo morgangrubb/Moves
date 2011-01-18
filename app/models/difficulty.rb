@@ -1,0 +1,2 @@
+class Difficulty < Attribute
+end

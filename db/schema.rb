@@ -10,15 +10,32 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110117035337) do
+ActiveRecord::Schema.define(:version => 20110118071429) do
 
-  create_table "moves", :force => true do |t|
-    t.string   "name",                           :null => false
-    t.text     "url",                            :null => false
-    t.text     "movie_url"
-    t.boolean  "local_movie", :default => false, :null => false
+  create_table "attributes", :force => true do |t|
+    t.string   "type"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  add_index "attributes", ["type"], :name => "index_attributes_on_type"
+
+  create_table "moves", :force => true do |t|
+    t.string   "name",                                     :null => false
+    t.text     "url",                                      :null => false
+    t.text     "movie_url"
+    t.boolean  "local_movie",           :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "lead_start_hand_id"
+    t.integer  "lead_finish_hand_id"
+    t.integer  "follow_start_hand_id"
+    t.integer  "follow_finish_hand_id"
+    t.boolean  "spins"
+    t.integer  "beats"
+    t.integer  "category_id"
+    t.integer  "difficulty_id"
   end
 
   add_index "moves", ["url"], :name => "index_moves_on_url", :unique => true

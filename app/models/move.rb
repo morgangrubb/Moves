@@ -1,6 +1,13 @@
 require 'crawl'
 
 class Move < ActiveRecord::Base
+  belongs_to :category
+  belongs_to :difficulty
+  belongs_to :lead_start_hand, :class_name => 'Hand'
+  belongs_to :lead_finish_hand, :class_name => 'Hand'
+  belongs_to :follow_start_hand, :class_name => 'Hand'
+  belongs_to :follow_finish_hand, :class_name => 'Hand'
+
   validates_presence_of :name
   validates_presence_of :url
 
