@@ -1,3 +1,5 @@
+require 'iconv'
+
 class RawMove < ActiveRecord::Base
   validates_presence_of :url
 
@@ -12,8 +14,8 @@ class RawMove < ActiveRecord::Base
       move = Move.find_or_new_by_url url
       move.update_attributes parse
       move.save
-    rescue Exception => e
-      puts e.message
+    # rescue Exception => e
+    #   puts e.message
     end
   end
 
@@ -50,17 +52,28 @@ class RawMove < ActiveRecord::Base
   end
   
   def body_node
-    @doc ||= Nokogiri::HTML body
+    ic = Iconv.new('UTF-8//IGNORE', 'UTF-8')
+    @doc ||= Nokogiri::HTML ic.iconv(body + ' ')[0..-2]
   end
   
   def get_category
-    cat = get_piece('category')
-    Category.find_or_create_by_name cat if cat.present?
+    begin
+      cat = get_piece('category')
+      Category.find_or_create_by_name cat if cat.present?
+    rescue Exception => e
+      link_data =~ %r("Category":"([A-Za-z]+)")
+      Category.where(["name LIKE ?", "#{$1}%"]).first if $1.present?
+    end
   end
   
   def get_difficulty
-    d = get_piece('difficulty')
-    Difficulty.find_or_create_by_name d if d.present?
+    begin
+      d = get_piece('difficulty')
+      Difficulty.find_or_create_by_name d if d.present?
+    rescue Exception => e
+      link_data =~ %r("Difficulty":"([A-Za-z]+)")
+      Difficulty.where(["name LIKE ?", "#{$1}%"]).first if $1.present?
+    end
   end
   
   def get_lead_start_hand
@@ -80,10 +93,13 @@ class RawMove < ActiveRecord::Base
   end
   
   def get_spins
-    if get_piece('spins').split(/\s+/).first =~ /yes/i
-      true
-    else
-      false
+    spins = get_piece('spins')
+    if spins
+      if spins.split(/\s+/).first =~ /yes/i
+        true
+      else
+        false
+      end
     end
   end
   
@@ -121,8 +137,8 @@ class RawMove < ActiveRecord::Base
     end
   
     def get_piece(piece)
-      fragment = body_node.to_xml.split('<b>').find { |s| s =~ /#{piece}:/i }
-      fragment.split('</b>').last.strip
+      fragment = body_node.to_html.split('<b>').find { |s| s =~ /#{piece}:/i }
+      fragment.split('</b>').last.strip if fragment
     end
 
 end
