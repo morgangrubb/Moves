@@ -11,12 +11,16 @@ class RawMove < ActiveRecord::Base
     puts "Promoting RawMove##{id}"
     
     begin
-      move = Move.find_or_new_by_url url
+      move = to_move
       move.update_attributes parse
       move.save
     # rescue Exception => e
     #   puts e.message
     end
+  end
+  
+  def to_move
+    Move.find_or_new_by_url url
   end
 
   def parse
@@ -31,7 +35,7 @@ class RawMove < ActiveRecord::Base
       :follow_finish_hand => get_follow_finish_hand,
       :spins              => get_spins,
       :beats              => get_beats,
-      # :description        => get_description
+      :move_beats         => get_move_beats
     }
   end
   
@@ -110,6 +114,20 @@ class RawMove < ActiveRecord::Base
     else
       nil
     end
+  end
+  
+  def get_move_beats
+    move_beats = []
+    body_node.css('ul li').each do |node|
+      text = node.text
+      
+      # Break it down
+      text =~ /^([^ ]+) (.*)$/
+      
+      # And make a beat out of it.
+      move_beats << MoveBeat.new(:beat => $1, :description => $2) if $2.present?
+    end
+    move_beats
   end
   
   private

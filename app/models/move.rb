@@ -7,6 +7,10 @@ class Move < ActiveRecord::Base
   belongs_to :lead_finish_hand, :class_name => 'Hand'
   belongs_to :follow_start_hand, :class_name => 'Hand'
   belongs_to :follow_finish_hand, :class_name => 'Hand'
+  
+  has_many :move_beats, :dependent => :destroy
+  
+  # accepts_nested_attributes_for :move_beats
 
   validates_presence_of :name
   validates_presence_of :url
@@ -60,5 +64,9 @@ class Move < ActiveRecord::Base
   def local_file_name
     movie_url =~ /\.([a-z0-9_-]+)$/i
     "#{id}.#{$1.downcase}"
+  end
+  
+  def raw_move
+    RawMove.where(:url => url).first
   end
 end

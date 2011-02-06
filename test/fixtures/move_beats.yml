@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  move_id: 1
+  beat: MyString
+  description: MyText
+
+two:
+  move_id: 1
+  beat: MyString
+  description: MyText

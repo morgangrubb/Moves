@@ -34,7 +34,7 @@
       = @move.category
     %li
       %b Source:
-      = link_to "network.ceroc.com", @move.url, :target => :_blank
+      = link_to URI::parse(@move.url).host, @move.url, :target => :_blank
     
 - widget_box("Video", :small => :right) do
   - if @move.local_movie?
@@ -42,4 +42,11 @@
       = link_to "", '/movies/' + @move.local_file_name, :class => :media
 
 - widget_box("Description") do
-  %p Something goes here.
+  %table{ :width => '100%' }
+    %tbody
+      - @move.move_beats.each do |beat|
+        %tr
+          %td{ :style => 'text-align:right;width: 30px' }
+            = beat.beat
+          %td
+            = beat.description
