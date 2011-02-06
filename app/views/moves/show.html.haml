@@ -2,13 +2,44 @@
   %script{ :type => "text/javascript", :src => "/js/jquery.media.js" }
   :javascript
     jQuery(document).ready(function() {
-      $('.media').media({ width: 400, height: 300, autoplay: true });
+      $('.media').media({ width: 400, height: 300, attrs: { width: "400px", width: "300", scale: "aspect" }, autoplay: true });
     });
 
 - widget_box(@move.name, :small => :left) do
-  Rar!
+  %table{ :style => "width:100%" }
+    %thead
+      %tr
+        %th
+        %th Start
+        %th End
+    %tbody
+      %tr
+        %td Lead
+        %td= @move.lead_start_hand
+        %td= @move.lead_finish_hand
+      %tr
+        %td Follow
+        %td= @move.follow_start_hand
+        %td= @move.follow_finish_hand
 
+  %ul
+    %li
+      %b Beats:
+      = @move.beats
+    %li
+      %b Difficulty:
+      = @move.difficulty
+    %li
+      %b Category:
+      = @move.category
+    %li
+      %b Source:
+      = link_to "network.ceroc.com", @move.url, :target => :_blank
+    
 - widget_box("Video", :small => :right) do
   - if @move.local_movie?
-    .hvlog
+    %p.hvlog
       = link_to "", '/movies/' + @move.local_file_name, :class => :media
+
+- widget_box("Description") do
+  %p Something goes here.

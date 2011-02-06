@@ -4,10 +4,10 @@
     %thead
       %tr
         %th Move
-        %th Difficulty
-        %th Category
-        %th Start hands
-        %th Finish hands
+        %th{ 'filter-type' => 'ddl' } Difficulty
+        %th{ 'filter-type' => 'ddl' } Category
+        %th{ 'filter-type' => 'ddl' } Start hands
+        %th{ 'filter-type' => 'ddl' } Finish hands
     %tbody
       = render :partial => 'move', :collection => @moves
 
