@@ -20,7 +20,7 @@ module ApplicationHelper
     @flash_rendered = true
     [:info, :warning, :error, :success, :notice].collect do |level|
       notice_box level, content_tag(:p, flash[level]) if flash[level].present?
-    end.compact.join
+    end.compact.join.html_safe
   end
   
   def notice_box(level, message)
@@ -109,17 +109,18 @@ module ApplicationHelper
     footer  = widget_footer options
 
     # And now the box options
-    options.reverse_merge! :box => {}
-    add_class! options[:box], :block
-    add_class! options[:box], :withsidebar if vertical_tabs?
+    box_options = options.delete(:box) || {}
+    
+    add_class! box_options, :block
+    add_class! box_options, :withsidebar if vertical_tabs?
 
     if options[:small]
-      add_class! options[:box], :small
-      add_class! options[:box], options[:small]
+      add_class! box_options, :small
+      add_class! box_options, options[:small]
     end
 
     # Put it all together
-    concat content_tag(:div, header + content + footer, options[:box])
+    concat content_tag(:div, header + content + footer, box_options)
     
     # Cleanup
     @widget_options       = nil
@@ -216,7 +217,7 @@ module ApplicationHelper
   # Adds a class to a hash of options unless it already exists.
   def add_class!(options, class_name)
     options[:class] = (options[:class] || '').to_s
-    options[:class] << " #{class_name}" unless options[:class] =~ /\b#{options[:class]}\b/
+    options[:class] << " #{class_name}" unless options[:class] =~ /\b#{class_name}\b/
   end
 
   class WidgetItem

@@ -1,0 +1,4 @@
+- widget_box("Create a new user") do
+  - form_for @user do |form|
+    = render "form", :user => @user, :form => form
+    = form.submit

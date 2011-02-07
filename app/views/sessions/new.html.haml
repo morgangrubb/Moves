@@ -1,0 +1,6 @@
+- widget_box("Log in", :box => { :class => 'small center login' }) do
+  = flash_notice
+  - form_for @user, :url => sessions_path, :builder => AdminusFormBuilder do |form|
+    = form.text_field :email
+    = form.password_field :password
+    = form.submit 'Log in', :cancel => false

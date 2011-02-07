@@ -1,8 +1,18 @@
 Moves::Application.routes.draw do
+  get "log_in" => "sessions#new", :as => "log_in"
+  get "log_out" => "sessions#destroy", :as => "log_out"
+
+  # get "users/new"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
+  root :to => "moves#index"
+
+
+  resources :users
   resources :moves
+  resources :sessions
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
