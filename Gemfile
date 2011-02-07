@@ -12,6 +12,8 @@ gem 'mechanize'
 gem 'haml'
 gem 'sass'
 
+gem 'capistrano'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 
