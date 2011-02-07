@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110206223216) do
+ActiveRecord::Schema.define(:version => 20110206232608) do
 
   create_table "attributes", :force => true do |t|
     t.string   "type"
@@ -31,6 +31,13 @@ ActiveRecord::Schema.define(:version => 20110206223216) do
 
   add_index "move_beats", ["move_id"], :name => "index_move_beats_on_move_id"
 
+  create_table "move_variants", :force => true do |t|
+    t.integer  "base_id"
+    t.integer  "variant_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "moves", :force => true do |t|
     t.string   "name",                                     :null => false
     t.text     "url",                                      :null => false
@@ -46,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20110206223216) do
     t.integer  "beats"
     t.integer  "category_id"
     t.integer  "difficulty_id"
+    t.text     "variant_keys"
   end
 
   add_index "moves", ["url"], :name => "index_moves_on_url", :unique => true

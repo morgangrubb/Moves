@@ -1,0 +1,15 @@
+%table#moves{ :style => "width: 100%;" }
+  %thead
+    %tr
+      %th{ :style => "width: 300px" } Move
+      %th{ 'filter-type' => 'ddl' } Difficulty
+      %th{ 'filter-type' => 'ddl' } Category
+      %th{ 'filter-type' => 'ddl' } Start hands
+      %th{ 'filter-type' => 'ddl' } Finish hands
+  %tbody
+    = render :partial => 'move', :collection => moves
+
+:javascript
+  $(document).ready(function() {
+    $('#moves').tableFilter();
+  });

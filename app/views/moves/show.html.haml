@@ -32,6 +32,11 @@
     %li
       %b Category:
       = @move.category
+    - if @move.bases.exists?
+      %li
+        %b Roots:
+        - @move.bases.ordered.each do |base|
+          = link_to base.name, move_path(base)
     %li
       %b Source:
       = link_to URI::parse(@move.url).host, @move.url, :target => :_blank
@@ -50,3 +55,7 @@
             = beat.beat
           %td
             = beat.description
+
+- if @move.variants.exists?
+  - widget_box("Variations") do
+    = render 'table', :moves => @move.variants.ordered

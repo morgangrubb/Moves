@@ -9,15 +9,23 @@ class Move < ActiveRecord::Base
   belongs_to :follow_finish_hand, :class_name => 'Hand'
   
   has_many :move_beats, :dependent => :destroy
+
+  has_many :move_variants, :class_name => "MoveVariant", :foreign_key => :base_id, :dependent => :destroy
+  has_many :variants, :through => :move_variants, :source => :variant
+
+  has_many :move_bases, :class_name => "MoveVariant", :foreign_key => :variant_id, :dependent => :destroy
+  has_many :bases, :through => :move_bases, :source => :base
   
-  # accepts_nested_attributes_for :move_beats
+  serialize :variant_keys
 
   validates_presence_of :name
   validates_presence_of :url
 
   LOCAL_MOVIE_PATH = Rails.root.join('public', 'movies')
 
-  before_save :fetch_movie
+  before_save :fetch_movie, :if => :fetch_movie?
+  
+  after_save :update_variants, :if => :update_variants?
 
   named_scope :ordered, :order => "name ASC"
 
@@ -48,6 +56,11 @@ class Move < ActiveRecord::Base
     end
   end
   
+  # TODO: Some logic here on when we should be fetching movies.
+  def fetch_movie?
+    false
+  end
+  
   def movie_url
     value = super
     if value[0] == '/'
@@ -69,4 +82,33 @@ class Move < ActiveRecord::Base
   def raw_move
     RawMove.where(:url => url).first
   end
+  
+
+
+  # ===============================================
+  # = Find variants based in simple text matching =
+  # ===============================================
+
+    def update_variants?
+      variant_keys.present?
+    end
+
+    # sqlite is case sensitive in UNICODE so do this the long way for now.
+    def update_variants
+      # new_variants = []
+      # variant_keys.each do |key|
+      #   new_variants += Move.where(["name LIKE ?", "%#{key}%"]).all
+      # end
+
+      # Yeah, this is not so pretty.
+      regex = /#{variant_keys.join('|')}/i
+      puts regex.inspect
+      new_variants = Move.all.to_a.find_all { |m| m.name =~ regex }
+
+      # This stuff doesn't change though
+      new_variants.uniq!
+      new_variants -= [self]
+      self.variants.replace new_variants
+    end
+
 end
