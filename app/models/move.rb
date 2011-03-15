@@ -1,5 +1,3 @@
-require 'crawl'
-
 class Move < ActiveRecord::Base
   belongs_to :category
   belongs_to :difficulty
@@ -81,6 +79,10 @@ class Move < ActiveRecord::Base
   
   def raw_move
     RawMove.where(:url => url).first
+  end
+  
+  def valid_utf8?
+    name.force_encoding('UTF-8').valid_encoding?
   end
   
 

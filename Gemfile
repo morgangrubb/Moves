@@ -14,6 +14,8 @@ gem 'sass'
 
 gem 'capistrano'
 
+gem 'yaml_db'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

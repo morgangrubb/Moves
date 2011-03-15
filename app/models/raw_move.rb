@@ -130,8 +130,37 @@ class RawMove < ActiveRecord::Base
     move_beats
   end
   
+  def valid_utf8?
+    (title || '').force_encoding('UTF-8').valid_encoding? && (body || '').force_encoding('UTF-8').valid_encoding?
+  end
+  
+  def fix_utf8!
+    if !valid_utf8?
+      self.title = fix_utf8 title
+      self.body = fix_utf8 body
+      save
+    end
+  end
+  
   private
-    
+
+    def fix_utf8(new_value)
+      if new_value.is_a? String
+        begin
+          # Try it as UTF-8 directly
+          cleaned = new_value.dup.force_encoding('UTF-8')
+          unless cleaned.valid_encoding?
+            # Some of it might be old Windows code page
+            cleaned = new_value.encode( 'UTF-8', 'Windows-1252' )
+          end
+          new_value = cleaned
+        rescue EncodingError
+          # Force it to UTF-8, throwing out invalid bits
+          new_value.encode!( 'UTF-8', invalid: :replace, undef: :replace )
+        end
+      end
+    end
+
     def hands
       return @hands if @hands.present?
       
