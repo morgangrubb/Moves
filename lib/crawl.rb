@@ -19,7 +19,12 @@ class Crawl
   end
   
   def login
-    auth = YAML.load_file 'config/auth.yml'
+    auth =
+      if const_defined? AUTH
+        AUTH
+      else
+        YAML.load_file 'config/auth.yml'
+      end
     
     page = agent.get AUTH_URL
     
