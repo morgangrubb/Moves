@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110207015223) do
+ActiveRecord::Schema.define(:version => 20110315061152) do
 
   create_table "attributes", :force => true do |t|
     t.string   "type"
@@ -22,11 +22,12 @@ ActiveRecord::Schema.define(:version => 20110207015223) do
   add_index "attributes", ["type"], :name => "index_attributes_on_type"
 
   create_table "move_beats", :force => true do |t|
-    t.integer  "move_id",     :null => false
+    t.integer  "move_id",                    :null => false
     t.string   "beat"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position",    :default => 0, :null => false
   end
 
   add_index "move_beats", ["move_id"], :name => "index_move_beats_on_move_id"

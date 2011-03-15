@@ -85,6 +85,16 @@ class Move < ActiveRecord::Base
     name.force_encoding('UTF-8').valid_encoding?
   end
   
+  def order_beats!
+    beats = move_beats.all
+    
+    beats.sort! { |a,b| a.beat.gsub(/[^0-9]/, '').to_i <=> b.beat.gsub(/[^0-9]/, '').to_i }
+    
+    beats.each_with_index do |beat, i|
+      beat.update_attributes :position => i
+    end
+  end
+  
 
 
   # ===============================================
