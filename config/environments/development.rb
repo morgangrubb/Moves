@@ -24,3 +24,4 @@ Moves::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 end
 
+MOVE_VIDEO_BASE_URL = '/movies'

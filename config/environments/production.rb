@@ -47,3 +47,5 @@ Moves::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 end
+
+MOVE_VIDEO_BASE_URL = 'http://dl.dropbox.com/u/23456268/movies'

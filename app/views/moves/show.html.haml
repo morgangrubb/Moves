@@ -44,7 +44,7 @@
 - widget_box("Video", :small => :right) do
   - if @move.local_movie?
     %p.hvlog
-      = link_to "", '/movies/' + @move.local_file_name, :class => :media
+      = link_to "", "#{MOVE_VIDEO_BASE_URL}/#{@move.local_file_name}", :class => :media
 
 - widget_box("Description") do
   %table{ :width => '100%' }
