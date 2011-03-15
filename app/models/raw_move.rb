@@ -156,7 +156,7 @@ class RawMove < ActiveRecord::Base
           new_value = cleaned
         rescue EncodingError
           # Force it to UTF-8, throwing out invalid bits
-          new_value.encode!( 'UTF-8', invalid: :replace, undef: :replace )
+          new_value.encode!( 'UTF-8', :invalid => :replace, :undef => :replace )
         end
       end
     end
